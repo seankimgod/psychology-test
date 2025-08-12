@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>심리테스트 모음</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+            background: #f7f8fa;
+            color: #333;
+            line-height: 1.5;
+            overflow-y: scroll; /* 항상 스크롤바 공간 확보 */
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .profile-section {
+            margin-top: 20px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border-radius: 40px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .search-section {
+            padding: 20px;
+            background: white;
+            margin-top: -10px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: none;
+            background: #f8f9fa;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background: #e9ecef;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .intro-text {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .categories {
+            display: flex;
+            gap: 8px;
+            margin: 0 20px 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .category-btn {
+            background: #f8f9fa;
+            border: none;
+            color: #6c757d;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-weight: 500;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .test-list {
+            padding: 0 20px 100px;
+            min-height: 400px; /* 최소 높이 설정으로 레이아웃 안정화 */
+        }
+
+        .test-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f3f4;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .test-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .test-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-thumbnail::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 16px;
+        }
+
+        .test-content {
+            flex: 1;
+        }
+
+        .test-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .test-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .test-badge {
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .test-badge.hot {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .test-badge.new {
+            background: linear-gradient(45deg, #26de81, #20bf6b);
+        }
+
+        .test-description {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .test-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        .test-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .admin-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .admin-fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 50px 16px 30px;
+            }
+            
+            .search-section,
+            .categories,
+            .test-list {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .admin-fab {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+
+        /* 스크롤바 스타일링 */
+        .categories::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .categories::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background: #dee2e6;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="profile-section">
+                <div class="profile-avatar">🧠</div>
+                <div class="profile-name">심리테스트</div>
+            </div>
+        </div>
+
+        <!-- 검색 섹션 -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="테스트를 검색해보세요" oninput="searchTests(this.value)">
+                <div class="search-icon">🔍</div>
+            </div>
+            <div class="intro-text">💡 재미있는 테스트로 나를 알아보세요 💡</div>
+        </div>
+
+        <!-- 카테고리 -->
+        <div class="categories">
+            <button class="category-btn active" onclick="filterTests('all')">전체</button>
+            <button class="category-btn" onclick="filterTests('personality')">성격</button>
+            <button class="category-btn" onclick="filterTests('love')">연애</button>
+            <button class="category-btn" onclick="filterTests('food')">음식</button>
+            <button class="category-btn" onclick="filterTests('lifestyle')">라이프스타일</button>
+            <button class="category-btn" onclick="filterTests('mbti')">MBTI</button>
+        </div>
+
+        <!-- 테스트 목록 -->
+        <div class="test-list" id="test-list">
+            <!-- 야식 유형 테스트 -->
+            <div class="test-item" data-category="food" onclick="openTest('night-snack')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #ffeaa7, #fab1a0);">🍜</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">야식 유형 테스트</div>
+                        <span class="test-badge hot">HOT</span>
+                    </div>
+                    <div class="test-description">나랑 잘 어울리는 야식은?</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 4.2천명</div>
+                        <div class="test-stat">⭐ 4.8</div>
+                        <div class="test-stat">⏱️ 2분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 연애 스타일 테스트 -->
+            <div class="test-item" data-category="love" onclick="openTest('love-style')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">💕</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">연애 스타일 테스트</div>
+                        <span class="test-badge hot">HOT</span>
+                    </div>
+                    <div class="test-description">나는 어떤 연애를 할까?</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 12.8천명</div>
+                        <div class="test-stat">⭐ 4.9</div>
+                        <div class="test-stat">⏱️ 3분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MBTI 궁합 테스트 -->
+            <div class="test-item" data-category="mbti" onclick="openTest('mbti-match')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">🧠</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">MBTI 궁합 테스트</div>
+                        <span class="test-badge new">NEW</span>
+                    </div>
+                    <div class="test-description">나와 잘 맞는 MBTI는?</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 2.3천명</div>
+                        <div class="test-stat">⭐ 4.6</div>
+                        <div class="test-stat">⏱️ 4분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 색깔 성향 테스트 -->
+            <div class="test-item" data-category="personality" onclick="openTest('color-personality')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">🌈</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">색깔 성향 테스트</div>
+                    </div>
+                    <div class="test-description">좋아하는 색깔로 알아보는 심리</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 6.7천명</div>
+                        <div class="test-stat">⭐ 4.5</div>
+                        <div class="test-stat">⏱️ 3분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 푸드 성격 테스트 -->
+            <div class="test-item" data-category="food" onclick="openTest('food-personality')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #d299c2, #fef9d7);">🍝</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">푸드 성격 테스트</div>
+                    </div>
+                    <div class="test-description">음식으로 알아보는 성격</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 8.1천명</div>
+                        <div class="test-stat">⭐ 4.7</div>
+                        <div class="test-stat">⏱️ 3분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 여행 스타일 테스트 -->
+            <div class="test-item" data-category="lifestyle" onclick="openTest('travel-style')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #89f7fe, #66a6ff);">✈️</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">여행 스타일 테스트</div>
+                    </div>
+                    <div class="test-description">나에게 맞는 여행 스타일</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 5.4천명</div>
+                        <div class="test-stat">⭐ 4.4</div>
+                        <div class="test-stat">⏱️ 4분</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 스트레스 해소 테스트 -->
+            <div class="test-item" data-category="lifestyle" onclick="openTest('stress-relief')">
+                <div class="test-thumbnail" style="background: linear-gradient(135deg, #c3cfe2, #c3cfe2);">😌</div>
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-title">스트레스 해소 테스트</div>
+                    </div>
+                    <div class="test-description">나만의 스트레스 해소법은?</div>
+                    <div class="test-stats">
+                        <div class="test-stat">👥 3.9천명</div>
+                        <div class="test-stat">⭐ 4.3</div>
+                        <div class="test-stat">⏱️ 3분</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 관리자 FAB -->
+        <button class="admin-fab" onclick="openAdmin()" title="관리자">⚙️</button>
+    </div>
+
+    <script>
+        // 테스트 필터링 기능
+        function filterTests(category) {
+            const items = document.querySelectorAll('.test-item');
+            const buttons = document.querySelectorAll('.category-btn');
+            
+            // 버튼 활성화 상태 변경
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 아이템 필터링
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'flex';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 검색 기능
+        function searchTests(query) {
+            const items = document.querySelectorAll('.test-item');
+            const searchQuery = query.toLowerCase().trim();
+            
+            items.forEach(item => {
+                const title = item.querySelector('.test-title').textContent.toLowerCase();
+                const description = item.querySelector('.test-description').textContent.toLowerCase();
+                
+                if (searchQuery === '' || title.includes(searchQuery) || description.includes(searchQuery)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 테스트 열기
+        function openTest(testId) {
+            if (testId === 'night-snack') {
+                // 실제 야식 테스트 페이지로 이동
+                window.open('야식테스트.html', '_blank');
+            } else {
+                alert(`${getTestName(testId)} 준비 중입니다!`);
+            }
+        }
+
+        function getTestName(testId) {
+            const names = {
+                'love-style': '연애 스타일 테스트',
+                'mbti-match': 'MBTI 궁합 테스트',
+                'color-personality': '색깔 성향 테스트',
+                'food-personality': '푸드 성격 테스트',
+                'travel-style': '여행 스타일 테스트',
+                'stress-relief': '스트레스 해소 테스트'
+            };
+            return names[testId] || '테스트';
+        }
+
+        // 관리자 페이지 열기
+        function openAdmin() {
+            const password = prompt('관리자 비밀번호:');
+            if (password === 'admin123') {
+                alert('관리자 페이지로 이동합니다!');
+                // 실제로는: window.location.href = 'admin.html';
+            } else if (password !== null) {
+                alert('비밀번호가 틀렸습니다.');
+            }
+        }
+
+        // 페이지 로드 시 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.test-item');
+            items.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'all 0.6s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

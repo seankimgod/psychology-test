@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>야식 유형 테스트 - 나랑 잘 어울리는 야식은?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .test-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .test-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .test-subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .question-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-container .btn {
+            flex: none;
+            width: 120px !important;
+            height: 47px !important;
+            min-width: 120px !important;
+            max-width: 120px !important;
+            min-height: 47px !important;
+            max-height: 47px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            vertical-align: top;
+        }
+
+        .other-tests {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f8f9fa;
+        }
+
+        .other-tests-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .test-card-mini {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .test-card-mini:hover {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .test-card-mini .emoji {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .test-card-mini .title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .result-container {
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-image {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #ffeaa7, #fab1a0);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .result-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .result-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .link-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #856404;
+        }
+
+        .external-link {
+            background: linear-gradient(45deg, #e17055, #fdcb6e);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .external-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(225, 112, 85, 0.3);
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .test-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-card">
+            <!-- 시작 화면 -->
+            <div id="start-screen">
+                <div class="test-image">🍜</div>
+                <h1 class="test-title">야식 유형 테스트</h1>
+                <p class="test-subtitle">나랑 잘 어울리는 야식은 무엇일까요?<br>간단한 질문으로 알아보세요!</p>
+                <button class="btn" onclick="startTest()">테스트 시작하기</button>
+            </div>
+
+            <!-- 질문 화면들 -->
+            <div id="question-1" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 20%"></div>
+                </div>
+                <div class="question-number">1</div>
+                <h2 class="question-title">밤늦게 배가 고플 때, 가장 먼저 떠오르는 생각은?</h2>
+                <div class="options">
+                    <div class="option" data-value="A" onclick="selectOptionAndNext(1, 'A', this)">
+                        🍕 "뭔가 따뜻하고 든든한 걸 먹고 싶어"
+                    </div>
+                    <div class="option" data-value="B" onclick="selectOptionAndNext(1, 'B', this)">
+                        🍿 "간단하고 바삭한 스낵이면 충분해"
+                    </div>
+                    <div class="option" data-value="C" onclick="selectOptionAndNext(1, 'C', this)">
+                        🍜 "국물 있는 따끈한 음식이 최고야"
+                    </div>
+                    <div class="option" data-value="D" onclick="selectOptionAndNext(1, 'D', this)">
+                        🍰 "달콤한 디저트로 하루를 마무리하고 싶어"
+                    </div>
+                </div>
+            </div>
+
+            <div id="question-2" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+                <div class="question-number">2</div>
+                <h2 class="question-title">야식을 먹을 때 가장 중요한 것은?</h2>
+                <div class="options">
+                    <div class="option" data-value="A" onclick="selectOptionAndNext(2, 'A', this)">
+                        ⏰ 빠르고 간편하게 준비할 수 있어야 해
+                    </div>
+                    <div class="option" data-value="B" onclick="selectOptionAndNext(2, 'B', this)">
+                        💰 가격이 부담스럽지 않아야 해
+                    </div>
+                    <div class="option" data-value="C" onclick="selectOptionAndNext(2, 'C', this)">
+                        😋 맛있고 만족스러워야 해
+                    </div>
+                    <div class="option" data-value="D" onclick="selectOptionAndNext(2, 'D', this)">
+                        🏠 집에서 편안하게 먹을 수 있어야 해
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn" onclick="prevQuestion(2)">이전</button>
+                </div>
+            </div>
+
+            <div id="question-3" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+                <div class="question-number">3</div>
+                <h2 class="question-title">친구들과 밤늦게 놀 때 어떤 야식을 주문할까요?</h2>
+                <div class="options">
+                    <div class="option" data-value="A" onclick="selectOptionAndNext(3, 'A', this)">
+                        🍗 치킨 - 모두가 좋아하는 무난한 선택
+                    </div>
+                    <div class="option" data-value="B" onclick="selectOptionAndNext(3, 'B', this)">
+                        🍕 피자 - 나눠먹기 좋은 파티 음식
+                    </div>
+                    <div class="option" data-value="C" onclick="selectOptionAndNext(3, 'C', this)">
+                        🍜 라면 - 따뜻하고 든든한 국물 요리
+                    </div>
+                    <div class="option" data-value="D" onclick="selectOptionAndNext(3, 'D', this)">
+                        🌮 이색 요리 - 특별한 경험을 원해
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn" onclick="prevQuestion(3)">이전</button>
+                </div>
+            </div>
+
+            <div id="question-4" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%"></div>
+                </div>
+                <div class="question-number">4</div>
+                <h2 class="question-title">야식을 먹은 후 기분은?</h2>
+                <div class="options">
+                    <div class="option" data-value="A" onclick="selectOptionAndNext(4, 'A', this)">
+                        😊 만족스럽고 행복해
+                    </div>
+                    <div class="option" data-value="B" onclick="selectOptionAndNext(4, 'B', this)">
+                        😴 포만감과 함께 졸려져
+                    </div>
+                    <div class="option" data-value="C" onclick="selectOptionAndNext(4, 'C', this)">
+                        😅 약간 죄책감이 들어
+                    </div>
+                    <div class="option" data-value="D" onclick="selectOptionAndNext(4, 'D', this)">
+                        🤔 "내일은 운동해야겠다" 생각해
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn" onclick="prevQuestion(4)">이전</button>
+                </div>
+            </div>
+
+            <div id="question-5" class="question-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="question-number">5</div>
+                <h2 class="question-title">이상적인 야식 시간은?</h2>
+                <div class="options">
+                    <div class="option" data-value="A" onclick="selectOptionAndNext(5, 'A', this)">
+                        🕘 저녁 9시 - 아직 일찍이니까 괜찮아
+                    </div>
+                    <div class="option" data-value="B" onclick="selectOptionAndNext(5, 'B', this)">
+                        🕚 밤 11시 - 하루 일과를 마무리하며
+                    </div>
+                    <div class="option" data-value="C" onclick="selectOptionAndNext(5, 'C', this)">
+                        🕐 새벽 1시 - 진짜 야식 타임이지
+                    </div>
+                    <div class="option" data-value="D" onclick="selectOptionAndNext(5, 'D', this)">
+                        🕒 새벽 3시 - 밤샘할 때 든든한 한 끼
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn" onclick="prevQuestion(5)">이전</button>
+                </div>
+            </div>
+
+            <!-- 결과 확인 전 안내 화면 -->
+            <div id="pre-result" class="result-container">
+                <div class="result-image">🎁</div>
+                <h2 class="result-title">테스트 완료!</h2>
+                <div class="link-notice">
+                    <strong>📢 잠깐!</strong><br>
+                    테스트 결과를 확인하려면 아래 링크를 클릭하여 쿠팡에 들어갔다가 다시 돌아와주세요!<br>
+                    (광고 수익으로 사이트 운영비를 충당하고 있습니다 🙏)
+                </div>
+                <a href="https://coupa.ng/ccABC123" target="_blank" class="external-link" id="coupang-link">
+                    🛍️ 쿠팡 구경하고 오기
+                </a>
+                <br>
+                <button class="btn" id="show-result-btn" onclick="showResult()" disabled>
+                    결과 확인하기 (링크 방문 후 활성화됩니다)
+                </button>
+            </div>
+
+            <!-- 최종 결과 화면 -->
+            <div id="result" class="result-container">
+                <div class="result-image" id="result-emoji">🍜</div>
+                <h2 class="result-title" id="result-type">당신의 야식 유형은...</h2>
+                <div class="result-description" id="result-desc">
+                    <!-- 결과 설명이 여기에 들어갑니다 -->
+                </div>
+                <div class="btn-container">
+                    <button class="btn back-btn" onclick="restart()">다시하기</button>
+                    <button class="btn" onclick="shareResult()">공유하기</button>
+                </div>
+                
+                <div class="other-tests">
+                    <h3 class="other-tests-title">🎯 다른 재미있는 테스트들</h3>
+                    <div class="test-grid">
+                        <div class="test-card-mini" onclick="alert('푸드 성격 테스트 준비중입니다!')">
+                            <div class="emoji">🍝</div>
+                            <div class="title">푸드 성격 테스트</div>
+                        </div>
+                        <div class="test-card-mini" onclick="alert('MBTI 연애 테스트 준비중입니다!')">
+                            <div class="emoji">💕</div>
+                            <div class="title">MBTI 연애 테스트</div>
+                        </div>
+                        <div class="test-card-mini" onclick="alert('색깔 성향 테스트 준비중입니다!')">
+                            <div class="emoji">🌈</div>
+                            <div class="title">색깔 성향 테스트</div>
+                        </div>
+                        <div class="test-card-mini" onclick="alert('여행 스타일 테스트 준비중입니다!')">
+                            <div class="emoji">✈️</div>
+                            <div class="title">여행 스타일 테스트</div>
+                        </div>
+                        <div class="test-card-mini" onclick="alert('음악 취향 테스트 준비중입니다!')">
+                            <div class="emoji">🎵</div>
+                            <div class="title">음악 취향 테스트</div>
+                        </div>
+                        <div class="test-card-mini" onclick="alert('스트레스 해소 테스트 준비중입니다!')">
+                            <div class="emoji">😌</div>
+                            <div class="title">스트레스 해소 테스트</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let answers = {};
+        let linkVisited = false;
+
+        function startTest() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('question-1').classList.add('active');
+        }
+
+        function selectOptionAndNext(questionNum, value, element) {
+            // 이전 선택 제거
+            const options = element.parentNode.children;
+            for (let option of options) {
+                option.classList.remove('selected');
+            }
+            
+            // 새 선택 추가
+            element.classList.add('selected');
+            answers[questionNum] = value;
+            
+            // 잠시 대기 후 자동으로 다음으로 이동
+            setTimeout(() => {
+                if (questionNum < 5) {
+                    document.getElementById(`question-${questionNum}`).classList.remove('active');
+                    document.getElementById(`question-${questionNum + 1}`).classList.add('active');
+                } else {
+                    // 마지막 질문인 경우 결과 화면으로
+                    showPreResult();
+                }
+            }, 200);
+        }
+
+        function selectOption(questionNum, value, element) {
+            // 이전 선택 제거
+            const options = element.parentNode.children;
+            for (let option of options) {
+                option.classList.remove('selected');
+            }
+            
+            // 새 선택 추가
+            element.classList.add('selected');
+            answers[questionNum] = value;
+            
+            // 다음 버튼 활성화
+            document.getElementById(`next-${questionNum}`) && (document.getElementById(`next-${questionNum}`).disabled = false);
+            document.getElementById(`finish-test`) && (document.getElementById(`finish-test`).disabled = false);
+        }
+
+        function nextQuestion(current) {
+            document.getElementById(`question-${current}`).classList.remove('active');
+            if (current < 5) {
+                document.getElementById(`question-${current + 1}`).classList.add('active');
+            }
+        }
+
+        function prevQuestion(current) {
+            document.getElementById(`question-${current}`).classList.remove('active');
+            document.getElementById(`question-${current - 1}`).classList.add('active');
+        }
+
+        function showPreResult() {
+            document.getElementById('question-5').classList.remove('active');
+            document.getElementById('pre-result').classList.add('active');
+            
+            // 링크 클릭 감지
+            document.getElementById('coupang-link').addEventListener('click', function() {
+                setTimeout(() => {
+                    linkVisited = true;
+                    const resultBtn = document.getElementById('show-result-btn');
+                    resultBtn.disabled = false;
+                    resultBtn.textContent = '결과 확인하기';
+                    resultBtn.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+                }, 2000); // 2초 후 버튼 활성화
+            });
+        }
+
+        function showResult() {
+            if (!linkVisited) {
+                alert('먼저 쿠팡 링크를 방문해주세요!');
+                return;
+            }
+
+            const result = calculateResult();
+            
+            document.getElementById('pre-result').classList.remove('active');
+            document.getElementById('result').classList.add('active');
+            document.getElementById('result-emoji').textContent = result.emoji;
+            document.getElementById('result-type').textContent = result.type;
+            document.getElementById('result-desc').innerHTML = result.description;
+        }
+
+        function calculateResult() {
+            // 간단한 결과 계산 로직
+            const answerCount = {A: 0, B: 0, C: 0, D: 0};
+            
+            for (let answer of Object.values(answers)) {
+                answerCount[answer]++;
+            }
+            
+            const maxAnswer = Object.keys(answerCount).reduce((a, b) => 
+                answerCount[a] > answerCount[b] ? a : b
+            );
+
+            const results = {
+                A: {
+                    emoji: '🍗',
+                    type: '든든한 치킨러버',
+                    description: `
+                        <strong>🔥 당신은 든든한 치킨러버입니다!</strong><br><br>
+                        • 야식하면 역시 치킨! 바삭바삭한 식감과 든든한 한 끼를 원하는 당신<br>
+                        • 친구들과 함께 나눠먹기도 좋고, 혼자 먹어도 만족스러운 완벽한 야식<br>
+                        • 양념치킨부터 후라이드치킨까지 다양한 맛을 즐기는 진정한 치킨 마니아<br><br>
+                        <em>추천 조합: 치킨 + 콜라 + 치킨무 = 완벽한 야식 타임 ✨</em>
+                    `
+                },
+                B: {
+                    emoji: '🍿',
+                    type: '간편한 스낵마니아',
+                    description: `
+                        <strong>✨ 당신은 간편한 스낵마니아입니다!</strong><br><br>
+                        • 복잡한 건 싫고 간단하게! 빠르고 맛있는 스낵을 선호하는 당신<br>
+                        • 과자, 견과류, 팝콘 등으로 가볍게 야식을 해결하는 스타일<br>
+                        • 준비 시간이 짧고 뒷정리도 간단해서 부담 없는 야식을 즐김<br><br>
+                        <em>추천 조합: 팝콘 + 영화 + 따뜻한 차 = 완벽한 힐링 타임 🎬</em>
+                    `
+                },
+                C: {
+                    emoji: '🍜',
+                    type: '따뜻한 국물러버',
+                    description: `
+                        <strong>🍲 당신은 따뜻한 국물러버입니다!</strong><br><br>
+                        • 차가운 밤에는 역시 따끈한 국물! 라면, 우동, 국밥을 사랑하는 당신<br>
+                        • 속이 든든해지고 몸이 따뜻해지는 야식을 선호<br>
+                        • 국물까지 모두 비우는 진정한 국물 마니아의 면모를 보임<br><br>
+                        <em>추천 조합: 라면 + 계란 + 대파 = 최고의 심야식당 메뉴 🥢</em>
+                    `
+                },
+                D: {
+                    emoji: '🍰',
+                    type: '달콤한 디저트족',
+                    description: `
+                        <strong>🧁 당신은 달콤한 디저트족입니다!</strong><br><br>
+                        • 하루의 마무리는 달콤하게! 케이크, 아이스크림, 초콜릿을 사랑하는 당신<br>
+                        • 스트레스받은 날에는 특히 단 음식으로 위로받는 타입<br>
+                        • 예쁜 디저트 카페나 베이커리를 자주 찾아다니는 스위트 러버<br><br>
+                        <em>추천 조합: 케이크 + 아메리카노 + 감성 음악 = 완벽한 나만의 시간 ☕</em>
+                    `
+                }
+            };
+
+            return results[maxAnswer];
+        }
+
+        function restart() {
+            answers = {};
+            linkVisited = false;
+            
+            // 모든 화면 숨기기
+            document.querySelectorAll('.question-container, .result-container').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            
+            // 모든 선택 초기화
+            document.querySelectorAll('.option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // 모든 버튼 비활성화
+            document.querySelectorAll('button[id^="next-"], #finish-test').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // show-result-btn 초기화
+            const resultBtn = document.getElementById('show-result-btn');
+            resultBtn.disabled = true;
+            resultBtn.textContent = '결과 확인하기 (링크 방문 후 활성화됩니다)';
+            resultBtn.style.background = '#ccc';
+            
+            // 시작 화면으로
+            document.getElementById('start-screen').style.display = 'block';
+        }
+
+        function shareResult() {
+            const result = calculateResult();
+            const text = `나의 야식 유형은 "${result.type}"! 당신의 야식 유형도 알아보세요!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '야식 유형 테스트 결과',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                // 클립보드에 복사
+                navigator.clipboard.writeText(text + ' ' + window.location.href);
+                alert('결과가 클립보드에 복사되었습니다!');
+            }
+        }
+    </script>
+</body>
+</html>

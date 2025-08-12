@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>심리테스트 생성</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+            background: #f7f8fa;
+            color: #333;
+            line-height: 1.5;
+            overflow-y: scroll;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 16px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+
+
+        .questions-section {
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .questions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-count {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .question-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .question-number {
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .option-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .option-value {
+            width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .option-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .option-input:focus {
+            outline: none;
+            background: white;
+            border-radius: 4px;
+            padding: 8px;
+        }
+
+        .results-section {
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-value {
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+
+        .preview-btn {
+            background: #28a745;
+        }
+
+        .preview-btn:hover {
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                padding: 16px 20px;
+                flex-direction: column;
+            }
+            
+            .btn-large {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>새 심리테스트 만들기</h1>
+        </div>
+
+        <div class="content">
+            <!-- 기본 정보 -->
+            <div class="section">
+                <h2 class="section-title">📝 기본 정보</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">테스트 제목</label>
+                    <input type="text" class="form-input" id="test-title" placeholder="예: 나의 연애 스타일 테스트">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">테스트 설명</label>
+                    <textarea class="form-input form-textarea" id="test-description" placeholder="테스트에 대한 간단한 설명을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">카테고리</label>
+                    <select class="form-input form-select" id="test-category">
+                        <option value="personality">성격</option>
+                        <option value="love">연애</option>
+                        <option value="food">음식</option>
+                        <option value="lifestyle">라이프스타일</option>
+                        <option value="mbti">MBTI</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">대표 이미지</label>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('image-upload').click()">이미지 선택</button>
+                            <span id="image-filename" style="font-size: 13px; color: #6c757d;">이미지를 선택해주세요</span>
+                        </div>
+                        <div id="image-preview" style="display: none;">
+                            <img id="preview-img" style="max-width: 120px; max-height: 120px; border-radius: 12px; border: 2px solid #e9ecef;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">결과지 경유 링크</label>
+                    <input type="url" class="form-input" id="bypass-link" placeholder="https://coupa.ng/...">
+                </div>
+            </div>
+
+            <!-- 질문 관리 -->
+            <div class="section questions-section">
+                <div class="questions-header">
+                    <h2 class="section-title">❓ 질문 관리</h2>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="question-count" id="question-count">질문 0개</span>
+                        <button class="btn btn-sm" onclick="addQuestion()">+ 질문 추가</button>
+                    </div>
+                </div>
+
+                <div id="questions-container">
+                    <!-- 질문들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 결과 관리 -->
+            <div class="section results-section">
+                <div class="questions-header">
+                    <h2 class="section-title">🎯 결과 유형 관리</h2>
+                    <button class="btn btn-sm" onclick="addResult()">+ 결과 추가</button>
+                </div>
+
+                <div id="results-container">
+                    <!-- 결과들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary btn-large" onclick="saveDraft()">임시저장</button>
+            <button class="btn preview-btn btn-large" onclick="previewTest()">미리보기</button>
+            <button class="btn btn-large" onclick="publishTest()">테스트 발행</button>
+        </div>
+    </div>
+
+    <script>
+        let questionCount = 0;
+        let resultCount = 0;
+        let selectedImage = null;
+
+        // 이미지 업로드 처리
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // 파일 크기 체크 (5MB 이하)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('이미지 크기는 5MB 이하로 선택해주세요.');
+                    return;
+                }
+                
+                // 이미지 파일 형식 체크
+                if (!file.type.startsWith('image/')) {
+                    alert('이미지 파일만 선택 가능합니다.');
+                    return;
+                }
+                
+                selectedImage = file;
+                
+                // 파일명 표시
+                document.getElementById('image-filename').textContent = file.name;
+                
+                // 미리보기 표시
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.getElementById('preview-img');
+                    previewImg.src = e.target.result;
+                    document.getElementById('image-preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 질문 추가
+        function addQuestion() {
+            questionCount++;
+            const container = document.getElementById('questions-container');
+            
+            const questionHtml = `
+                <div class="question-item" id="question-${questionCount}">
+                    <div class="question-header">
+                        <div class="question-number">${questionCount}</div>
+                        <div class="question-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="moveQuestion(${questionCount}, 'up')">↑</button>
+                            <button class="btn btn-sm btn-secondary" onclick="moveQuestion(${questionCount}, 'down')">↓</button>
+                            <button class="btn btn-sm btn-danger" onclick="removeQuestion(${questionCount})">삭제</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">질문 내용</label>
+                        <input type="text" class="form-input" placeholder="질문을 입력하세요" id="question-text-${questionCount}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">선택지</label>
+                        <div id="options-${questionCount}">
+                            <div class="option-item">
+                                <div class="option-value">A</div>
+                                <input type="text" class="option-input" placeholder="선택지 A를 입력하세요">
+                            </div>
+                            <div class="option-item">
+                                <div class="option-value">B</div>
+                                <input type="text" class="option-input" placeholder="선택지 B를 입력하세요">
+                            </div>
+                            <div class="option-item">
+                                <div class="option-value">C</div>
+                                <input type="text" class="option-input" placeholder="선택지 C를 입력하세요">
+                            </div>
+                            <div class="option-item">
+                                <div class="option-value">D</div>
+                                <input type="text" class="option-input" placeholder="선택지 D를 입력하세요">
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="addOption(${questionCount})" style="margin-top: 8px;">+ 선택지 추가</button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', questionHtml);
+            updateQuestionCount();
+        }
+
+        // 선택지 추가
+        function addOption(questionId) {
+            const optionsContainer = document.getElementById(`options-${questionId}`);
+            const optionCount = optionsContainer.children.length;
+            const optionValue = String.fromCharCode(65 + optionCount); // A, B, C, D, E, F...
+            
+            const optionHtml = `
+                <div class="option-item">
+                    <div class="option-value">${optionValue}</div>
+                    <input type="text" class="option-input" placeholder="선택지 ${optionValue}를 입력하세요">
+                    <button class="btn btn-sm btn-danger" onclick="removeOption(this)">삭제</button>
+                </div>
+            `;
+            
+            optionsContainer.insertAdjacentHTML('beforeend', optionHtml);
+        }
+
+        // 선택지 삭제
+        function removeOption(button) {
+            const optionItem = button.closest('.option-item');
+            const optionsContainer = optionItem.parentNode;
+            
+            if (optionsContainer.children.length > 2) { // 최소 2개는 유지
+                optionItem.remove();
+                
+                // 선택지 값 재정렬 (A, B, C, D...)
+                Array.from(optionsContainer.children).forEach((option, index) => {
+                    const valueDiv = option.querySelector('.option-value');
+                    const input = option.querySelector('.option-input');
+                    const newValue = String.fromCharCode(65 + index);
+                    valueDiv.textContent = newValue;
+                    input.placeholder = `선택지 ${newValue}를 입력하세요`;
+                });
+            } else {
+                alert('최소 2개의 선택지는 필요합니다.');
+            }
+        }
+
+        // 질문 삭제
+        function removeQuestion(questionId) {
+            if (confirm('이 질문을 삭제하시겠습니까?')) {
+                document.getElementById(`question-${questionId}`).remove();
+                updateQuestionCount();
+                renumberQuestions();
+            }
+        }
+
+        // 질문 순서 변경
+        function moveQuestion(questionId, direction) {
+            const question = document.getElementById(`question-${questionId}`);
+            const container = question.parentNode;
+            
+            if (direction === 'up' && question.previousElementSibling) {
+                container.insertBefore(question, question.previousElementSibling);
+            } else if (direction === 'down' && question.nextElementSibling) {
+                container.insertBefore(question.nextElementSibling, question);
+            }
+            
+            renumberQuestions();
+        }
+
+        // 질문 번호 재정렬
+        function renumberQuestions() {
+            const questions = document.querySelectorAll('.question-item');
+            questions.forEach((question, index) => {
+                const numberDiv = question.querySelector('.question-number');
+                numberDiv.textContent = index + 1;
+            });
+        }
+
+        // 질문 개수 업데이트
+        function updateQuestionCount() {
+            const count = document.querySelectorAll('.question-item').length;
+            document.getElementById('question-count').textContent = `질문 ${count}개`;
+        }
+
+        // 결과 추가
+        function addResult() {
+            resultCount++;
+            const container = document.getElementById('results-container');
+            
+            const resultHtml = `
+                <div class="result-item" id="result-${resultCount}">
+                    <div class="result-header">
+                        <div class="result-value">${String.fromCharCode(64 + resultCount)}</div>
+                        <button class="btn btn-sm btn-danger" onclick="removeResult(${resultCount})">삭제</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">결과 이모지</label>
+                        <input type="text" class="form-input" placeholder="🎯" id="result-emoji-${resultCount}" maxlength="2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">결과 제목</label>
+                        <input type="text" class="form-input" placeholder="예: 로맨틱한 연애를 꿈꾸는 당신" id="result-title-${resultCount}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">결과 설명</label>
+                        <textarea class="form-input form-textarea" placeholder="결과에 대한 자세한 설명을 입력하세요" id="result-description-${resultCount}"></textarea>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', resultHtml);
+        }
+
+        // 결과 삭제
+        function removeResult(resultId) {
+            if (confirm('이 결과를 삭제하시겠습니까?')) {
+                document.getElementById(`result-${resultId}`).remove();
+                renumberResults();
+            }
+        }
+
+        // 결과 번호 재정렬
+        function renumberResults() {
+            const results = document.querySelectorAll('.result-item');
+            results.forEach((result, index) => {
+                const valueDiv = result.querySelector('.result-value');
+                valueDiv.textContent = String.fromCharCode(65 + index); // A, B, C, D...
+            });
+        }
+
+        // 데이터 수집
+        function collectTestData() {
+            const testData = {
+                title: document.getElementById('test-title').value,
+                description: document.getElementById('test-description').value,
+                category: document.getElementById('test-category').value,
+                image: selectedImage ? selectedImage.name : null,
+                bypassLink: document.getElementById('bypass-link').value,
+                questions: [],
+                results: []
+            };
+
+            // 질문 데이터 수집
+            document.querySelectorAll('.question-item').forEach((question, index) => {
+                const questionText = question.querySelector(`[id^="question-text-"]`).value;
+                const options = [];
+                
+                question.querySelectorAll('.option-input').forEach(input => {
+                    if (input.value.trim()) {
+                        options.push(input.value.trim());
+                    }
+                });
+
+                if (questionText && options.length >= 2) {
+                    testData.questions.push({
+                        id: index + 1,
+                        text: questionText,
+                        options: options
+                    });
+                }
+            });
+
+            // 결과 데이터 수집
+            document.querySelectorAll('.result-item').forEach((result, index) => {
+                const emoji = result.querySelector(`[id^="result-emoji-"]`).value;
+                const title = result.querySelector(`[id^="result-title-"]`).value;
+                const description = result.querySelector(`[id^="result-description-"]`).value;
+
+                if (title && description) {
+                    testData.results.push({
+                        id: String.fromCharCode(65 + index),
+                        emoji: emoji || '🎯',
+                        title: title,
+                        description: description
+                    });
+                }
+            });
+
+            return testData;
+        }
+
+        // 임시저장
+        function saveDraft() {
+            const testData = collectTestData();
+            localStorage.setItem('test_draft', JSON.stringify(testData));
+            alert('임시저장되었습니다!');
+        }
+
+        // 미리보기
+        function previewTest() {
+            const testData = collectTestData();
+            
+            if (!testData.title || testData.questions.length === 0 || testData.results.length === 0) {
+                alert('기본 정보, 질문, 결과를 모두 입력해주세요.');
+                return;
+            }
+            
+            // 미리보기 창에서 실제 테스트를 보여줄 수 있습니다
+            alert('미리보기 기능 구현 예정입니다!\n\n현재 데이터:\n' + 
+                  `제목: ${testData.title}\n` +
+                  `질문 수: ${testData.questions.length}개\n` +
+                  `결과 수: ${testData.results.length}개`);
+        }
+
+        // 테스트 발행
+        function publishTest() {
+            const testData = collectTestData();
+            
+            if (!testData.title || testData.questions.length === 0 || testData.results.length === 0) {
+                alert('기본 정보, 질문, 결과를 모두 입력해주세요.');
+                return;
+            }
+            
+            if (confirm('테스트를 발행하시겠습니까?')) {
+                // 여기서 서버에 데이터를 저장하거나 파일로 생성할 수 있습니다
+                console.log('발행할 테스트 데이터:', testData);
+                alert('테스트가 발행되었습니다!');
+            }
+        }
+
+        // 페이지 로드 시 기본 질문과 결과 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // 기본 질문 하나 추가
+            addQuestion();
+            
+            // 기본 결과 두 개 추가
+            addResult();
+            addResult();
+        });
+    </script>
+</body>
+</html>
